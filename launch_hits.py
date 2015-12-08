@@ -31,8 +31,6 @@ if __name__ == '__main__':
     # TODO: double check to see if this is still necessary.
     template_params = { 'input': json.dumps(hit_input) }
     html = template.render(template_params)
-    with open("tmp.html", "w") as f:
-        f.write(html)
     html_question = HTMLQuestion(html, frame_height)
     hit_properties['question'] = html_question
 
