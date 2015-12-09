@@ -10,10 +10,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
     <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
     <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
     <script src="https://cdn.jsdelivr.net/vue/1.0.10/vue.min.js"></script>
-
 
     <style>
     html, body {
@@ -227,6 +227,10 @@
       font-size: 1.2em;
     }
 
+    .turk .text {
+      font-size: 1.2em;
+    }
+
     .turk .question-section {
       min-height: 700px;
     }
@@ -258,12 +262,17 @@
         <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
           <div class="mdl-card mdl-cell mdl-cell--12-col">
             <div class="mdl-card__supporting-text">
-              <h3>Instruction</h3>
-              <ul>
-                <li v-for="item in testList">
-                   {{ item.text}}
-                </li>
-              </ul>
+              <h3>Instructions</h3>
+              <p class="text">
+                Please look at the movie shown below, then answer the questions
+                at the bottom of the page.
+                It does not matter whether or not you have watched the movie;
+                use your best judgment.
+                Please answer all three questions (each question has several parts)
+                before submitting the HIT.
+                Some questions have verifiable answers that we will check before
+                accepting the HIT.
+              </p>
             </div>
           </div>
         </section>
@@ -275,7 +284,9 @@
             <div class="mdl-card mdl-cell mdl-cell--9-col-desktop">
               <div class="mdl-card__supporting-text">
                 <h4>{{ movieTitle }}</h4>
-                {{  movieDescription }}
+                <p class="text">
+                  {{  movieDescription }}
+                </p>
               </div>
             </div>
           </section>
@@ -284,7 +295,7 @@
             <div class="mdl-card mdl-cell mdl-cell--12-col">
               <div class="mdl-card__supporting-text">
                 <div v-show="pageType === 'question'">
-                  <h5> {{questions[questionIdx]}} </h5>
+                  <h4> {{questions[questionIdx]}} </h4>
                   <table class="mdl-data-table mdl-shadow--2dp question-table">
                     <thead>
                       <tr>
@@ -292,12 +303,22 @@
                         <th class="mdl-data-table__cell--non-numeric">{{tableHeader[questionIdx] + "?"}}</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr v-for="tag in clusters[clusterIdx].tags">
+                    <tbody v-if="questionIdx < 2">
+                      <tr v-for="tag in tagsShown">
                         <td class="mdl-data-table__cell--non-numeric table-text">{{ tag.name }}</td>
                         <td>
                           <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
                             <input type="checkbox" class="mdl-checkbox__input" v-model="tag[tableHeader[questionIdx]]">
+                          </label>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tbody v-else>
+                      <tr v-for="tag in tagsShown | goodTag tableHeader">
+                        <td class="mdl-data-table__cell--non-numeric table-text">{{ tag.name }}</td>
+                        <td>
+                          <label  class="mdl-radio mdl-js-radio mdl-js-ripple-effect">
+                            <input type="radio" class="mdl-radio__button" v-bind:value="tag.name" v-model="clusters[clusterIdx][tableHeader[questionIdx]]">
                           </label>
                         </td>
                       </tr>
@@ -311,7 +332,7 @@
                   </div>
                 </div>
                 <div v-show="pageType === 'transit'">
-                  <h5>Next question...</h5>
+                  <h4>Next question...</h4>
                   <div class="nav-buttons">
                     <button v-on:click="clickOnNext()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored button">
                       <i class="material-icons">arrow_forward</i>
@@ -326,9 +347,8 @@
                       <label class="mdl-textfield__label" for="comment">Comments...</label>
                     </div>
                   </form>
-                  <button v-on:click="finish()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored button">
-                    Submit HIT!
-                  </button>
+                  {% endraw %}
+                  {% include "simpleamt.html" %}
                 </div>
             </div>
             </div>
@@ -340,33 +360,35 @@
             </div>
           </div>
           </footer>
-        {% endraw %}
       </main>
     </div>
     </div>
-    {% include "simpleamt.html" %}
+
     <script>
     var DEFAULT_INPUT = {
+      movieId: 123,
       movieTitle: "The Perks of Being a Wallflower",
       movieDescription: "A coming-of-age story based on the best-selling novel by Stephen Chbosky, which follows 15-year-old freshman Charlie, an endearing and naive outsider who is taken under the wings of two seniors. A moving tale of love, loss, fear and hope - and the unforgettable friends that help us through life.",
       posterSrc: "//image.tmdb.org/t/p/w185/s9R55JZF8g0WEqZvf7YWh4FZVYl.jpg",
-      clusters: [{"tags": [{"name": "teen", "Not belong": false}, {"name": "coming-of-age"}, {"name": "indie"}, {"name": "pg-13"}]}, {"tags": [{"name": "drama"}, {"name": "bittersweet"}, {"name": "touching"}, {"name": "emotional"}, {"name": "nostalgic"}, {"name": "melancholic"}]}, {"tags": [{"name": "adolescence"}, {"name": "depression"}, {"name": "loneliness"}, {"name": "friendship"}, {"name": "suicide"}]}, {"tags": [{"name": "teenager"}, {"name": "teenagers"}, {"name": "mentor"}, {"name": "teens"}]}, {"tags": [{"name": "original"}]}],
+      clusters: [{"tags": [{"name": "adolescence"}, {"name": "depression"}, {"name": "loneliness"}, {"name": "friendship"}, {"name": "suicide"}]}, {"tags": [{"name": "teenager"}, {"name": "teenagers"}, {"name": "mentor"}, {"name": "teens"}]}, {"tags": [{"name": "original"}]}],
     };
     var input = simpleamt.getInput(DEFAULT_INPUT);
     var vm = new Vue({
       el: '#app',
       data: {
+        movieId: input.movieId,
         movieTitle: input.movieTitle,
         movieDescription: input.movieDescription,
         posterSrc: input.posterSrc,
         clusters: input.clusters,
         questions: [
-          "1. Which of the following tags do not belong to the rest of tags? If there are two tags describing very different aspect of the movie, pick the one that is less relevant to the movie.",
-          "2. Imagine you want to persuade your friend to watch this movie. Which of the following tags are not appropriate to fill in the sentence 'you like movies featuring [Noun]' or 'you like [adjective] movies'?",
-          "3. Pick one tag that best represent all tags in the group."
+          "1. The following table contains a group of related, descriptive tags about the movie above. Mark any tags that do not fit with the others. E.g., 'kids' does not fit with 'violence' and 'brutality'. If there are only two tags, and they describe very different aspects of the movie, please mark the one that is less relevant to the movie.",
+          "2. Mark any tags that are potentially offensive or inappropriate for use in a family-oriented web site. E.g., 'suicide' and 'nudity' are inappropriate.",
+          // Imagine that you want to persuade your friend to watch this movie. Which of the following tags are not appropriate to fill in the sentence 'you like movies featuring [Noun]' or 'you like [adjective] movies'?
+          "3. Pick the tag that best represents the group of tags."
         ],
         tableHeader: [
-          "Not belong",
+          "Does not fit",
           "Inappropriate",
           "Best tag"
         ],
@@ -375,10 +397,21 @@
         pageType: "question",
         comment: ""
       },
+      created: function() {
+        if (!simpleamt.isPreview()) {
+          simpleamt.setupSubmit();
+          $('#submit-btn').prop('disabled', false);
+        }
+        // Shallow copy tags shown and assign modified object back when clicking
+        // on "next".
+        // this.tagsShown = $.extend({}, this.clusters[0].tags);
+      },
       computed: {
-        clusterShown: function() {
-          console.log(clusters[clusterIdx]);
-          return clusters[clusterIdx];
+        tagsShown: function() {
+          if (this.clusterIdx < this.clusters.length) {
+            return this.clusters[this.clusterIdx].tags;
+          }
+          return [];
         }
       },
       methods: {
@@ -387,21 +420,50 @@
             this.pageType = "question";
             return;
           }
+          if (this.questionIdx == 2) {
+            // Check if user has clicked on any radio button.
+            filteredTags = goodTagFilterFun(this.clusters[this.clusterIdx].tags, this.tableHeader);
+            if (filteredTags.length > 0
+              && !this.clusters[this.clusterIdx].hasOwnProperty(this.tableHeader[2])) {
+              alert("Please select the best tag.")
+              return;
+            }
+          }
           this.clusterIdx += 1;
           if (this.clusterIdx >= this.clusters.length) {
-            this.questionIdx += 1;
-            if (this.questionIdx >= 3) {
+            if (this.questionIdx == 2) {
               this.pageType = "finish";
               return;
             }
+            this.questionIdx += 1;
             this.pageType = "transit";
           }
           this.clusterIdx %= this.clusters.length;
         },
-        finish: function() {
-          console.log(this.clusters);
-        }
       }
+    });
+    var goodTagFilterFun = function(array, headers) {
+      return array.filter(function(value){
+        result = true;
+        for (var idx = 0; idx < headers.length; idx ++) {
+          var header = headers[idx];
+          result &= !value.hasOwnProperty(header) || !value[header];
+        }
+        return result;
+      });
+    }
+
+    Vue.filter('goodTag', goodTagFilterFun);
+    $(function() {
+      $('#submit-btn').click(function() {
+        console.log("submit!");
+        console.log(vm.$data.clusters);
+        simpleamt.setOutput({
+          "movieId": vm.$data.movieId,
+          "clusters": vm.$data.clusters,
+          "comment": vm.$data.comment
+        });
+      })
     });
     </script>
   </body>

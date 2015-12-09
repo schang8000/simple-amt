@@ -4,9 +4,9 @@
   "keywords": "image,images,write,writing,sentence",
   "reward": 0.05,
   "duration": 900,
-  "frame_height": 5000,
+  "frame_height": 1000,
   "max_assignments": 1,
   "country": "US",
-  "hits_approved": 100,
-  "percent_approved": 98
+  "hits_approved": 5,
+  "percent_approved": 90
 }
