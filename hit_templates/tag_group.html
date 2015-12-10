@@ -266,13 +266,16 @@
               <p class="text">
                 Please look at the movie shown below, then answer the questions
                 at the bottom of the page.
-                It does not matter whether or not you have watched the movie;
-                use your best judgment.
                 Please answer all three questions (each question has several parts)
                 before submitting the HIT.
-                Some questions have verifiable answers that we will check before
-                accepting the HIT.
               </p>
+              <h4>Note:</h4>
+              <ul>
+                <li><strong>It does not matter whether or not you have watched the movie;
+                use your best judgment.</strong></li>
+                <li><strong>Some questions have verifiable answers that we will check before
+                accepting your HIT.</strong></li>
+              </ul>
             </div>
           </div>
         </section>
@@ -452,7 +455,6 @@
         return result;
       });
     }
-
     Vue.filter('goodTag', goodTagFilterFun);
     $(function() {
       $('#submit-btn').click(function() {
