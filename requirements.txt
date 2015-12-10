@@ -2,3 +2,5 @@ Jinja2==2.7.3
 MarkupSafe==0.23
 boto==2.34.0
 wsgiref==0.1.2
+gensim==0.12.3
+pymysql==0.6.7
