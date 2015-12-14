@@ -17,6 +17,7 @@ if __name__ == '__main__':
 
   for hit_id in hit_ids:
     for a in mtc.get_assignments(hit_id):
+      print a.AssignmentStatus
       if a.AssignmentStatus == 'Submitted':
         try:
           # Try to parse the output from the assignment. If it isn't
@@ -41,4 +42,3 @@ if __name__ == '__main__':
       mtc.reject_assignment(assignment_id, feedback='Invalid results')
   else:
     print 'Aborting'
-          
