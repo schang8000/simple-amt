@@ -84,6 +84,7 @@ if __name__ == "__main__":
     movie_detail_genome = movie_detail[
         movie_detail.movieId.isin(set(movie_genome.movie_id))
         ].sort_values(by=['rating_density'], ascending=False)
+    movie_detail_genome = movie_detail_genome[movie_detail_genome.avgRating>=3.5]
     movie_ids = []
     if args.movie_id_file:
         with open(args.movie_id_file) as f:

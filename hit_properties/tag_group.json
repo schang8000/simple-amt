@@ -1,12 +1,12 @@
 {
-  "title": "Select tags for a movie",
-  "description": "This is a test",
-  "keywords": "image,images,write,writing,sentence",
-  "reward": 0.05,
+  "title": "Judge tags for movies",
+  "description": "Make judgments on tags for a movie.",
+  "keywords": "movie,tags,similarity",
+  "reward": 0.15,
   "duration": 900,
   "frame_height": 1000,
-  "max_assignments": 1,
+  "max_assignments": 5,
   "country": "US",
-  "hits_approved": 5,
-  "percent_approved": 90
+  "hits_approved": 2000,
+  "percent_approved": 99
 }

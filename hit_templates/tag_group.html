@@ -231,6 +231,11 @@
       font-size: 1.2em;
     }
 
+    .turk .warning-text {
+      font-size: 1.4em;
+      color: red;
+    }
+
     .turk .question-section {
       min-height: 700px;
     }
@@ -273,8 +278,7 @@
               <ul>
                 <li><strong>It does not matter whether or not you have watched the movie;
                 use your best judgment.</strong></li>
-                <li><strong>Some questions have verifiable answers that we will check before
-                accepting your HIT.</strong></li>
+                <li class="warning-text"><strong>Some questions have verifiable answers. We will reject your HITs if you provide wrong answers.</strong></li>
               </ul>
             </div>
           </div>
@@ -385,10 +389,10 @@
         posterSrc: input.posterSrc,
         clusters: input.clusters,
         questions: [
-          "1. The following table contains a group of related, descriptive tags about the movie above. Mark any tags that do not fit with the others. E.g., 'kids' does not fit with 'violence' and 'brutality'. If there are only two tags, and they describe very different aspects of the movie, please mark the one that is less relevant to the movie.",
+          "1. The following table contains a group of related, descriptive tags about the movie above. Mark any tags that do not fit with the others. E.g., 'kids' does not fit with 'violence' and 'brutality'. If there are only two tags, and they describe very different aspects of the movie, please do not mark either one.",
           "2. Mark any tags that are potentially offensive or inappropriate for use in a family-oriented web site. E.g., 'suicide' and 'nudity' are inappropriate.",
           // Imagine that you want to persuade your friend to watch this movie. Which of the following tags are not appropriate to fill in the sentence 'you like movies featuring [Noun]' or 'you like [adjective] movies'?
-          "3. Pick the tag that best represents the group of tags."
+          "3. Pick the tag that best represents the group of tags. If there are two tags, pick the one that better describes the movie."
         ],
         tableHeader: [
           "Does not fit",
