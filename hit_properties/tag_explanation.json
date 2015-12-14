@@ -1,0 +1,12 @@
+{
+  "title": "Select quote and write review for a movie",
+  "description": "Select quotes that best describes a movie and write reviews based on the quotes. Takes 5~10 minutes.",
+  "keywords": "movie,tags,review",
+  "reward": 0.80,
+  "duration": 900,
+  "frame_height": 1000,
+  "max_assignments": 3,
+  "country": "US",
+  "hits_approved": 2000,
+  "percent_approved": 98
+}
