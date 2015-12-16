@@ -285,9 +285,7 @@
             <div class="mdl-card__supporting-text">
               <h3>Instructions</h3>
               <p class="text">
-                Please look at the movie shown below, select a sentence that best describes one topical aspect of the movie and then write
-                a review based on the sentence.
-                Each aspect is described by several keywords.
+                Please look at the movie shown below and answer the questions below.
                 It does not matter whether or not you have watched the movie;
                 use your best judgment.
               </p>
@@ -342,14 +340,14 @@
                     </tbody>
                   </table>
                 <br /><br /><br />
-                  <h4>2. Now, edit the following short review generated based on the sentence you selected. The review should be less than 50 words and has correct grammar. Keep the start of the review with the format of  'You like movies featuring [Noun]'  or 'You like [Adjective] movies'.</h4>
+                  <h4>2. Now, edit the following short review generated based on the sentence you selected. The review should be less than 50 words and have correct grammar. Keep the start of the review with the format of  'You like movies featuring [Noun]'  or 'You like [Adjective] movies'.</h4>
                   <form action="#">
                     <div class="mdl-textfield mdl-js-textfield review-input">
                       <textarea v-model="review" class="mdl-textfield__input" type="text" rows= "4" id="user-review"></textarea>
                     </div>
                   </form>
                   Word count: {{review.split(' ').length - 1}}
-                  
+
                 <div class="nav-buttons">
                   {{clusterIdx + 1}} of {{clusters.length}}
                   <button v-on:click="clickOnNext()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored button">
@@ -494,11 +492,18 @@
           if (reviewLen == 0) {
             alert("Review can not be empty!");
             return;
+          } else if (this.selectedQuote === '') {
+            alert("You must select a quote!");
+            return;
           } else if (this.generatedReview === this.review ) {
             alert("You must edit the review.");
             return;
           } else if (reviewLen > 50) {
             alert("Please shorten the review to less than 50 words.");
+            return;
+          }
+          if (this.review.indexOf('You like movie') < 0) {
+            alert("Your review must start with 'You like movies ___'. Carefully read the instruction!");
             return;
           }
           this.clusters[this.clusterIdx]['review'] = this.review;
