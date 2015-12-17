@@ -13,7 +13,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
     <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
     <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/vue/1.0.10/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue/1.0.10/vue.min.js"></script>
 
     <style>
     html, body {
@@ -241,8 +241,11 @@
     .turk .question-section {
       min-height: 700px;
     }
+    .turk .best-cell {
+      width: 5%;
+    }
     .turk .quote-cell {
-      width: 92%;
+      width: 80%;
       word-wrap: break-word;
       white-space: -o-pre-wrap;
       word-wrap: break-word;
@@ -255,6 +258,9 @@
       margin-left: auto;
       margin-right: auto;
     }
+    .turk .red {
+      color: red;
+    }
     </style>
   </head>
   <body class="turk mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
@@ -262,7 +268,7 @@
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
         <div class="mdl-layout--large-screen-only mdl-layout__header-row">
-          <h3>Select and Write Reviews for a Movie</h3>
+          <h3>Select Best Reviews for a Movie</h3>
         </div>
       </header>
       <main class="mdl-layout__content">
@@ -291,7 +297,8 @@
               </p>
               <h4>Note:</h4>
               <ul>
-                <li class="warning-text"><strong>We will examine the review. We will reject your HIT if the review you write is clearly not as good as the existing quotes.</strong></li>
+                <li class="warning-text"><strong>Some questions have verifiable answers that we will check before
+                accepting your HIT.</strong></li>
               </ul>
             </div>
           </div>
@@ -315,38 +322,50 @@
             <div class="mdl-card mdl-cell mdl-cell--12-col">
               <div class="mdl-card__supporting-text">
                 <div v-show="pageType === 'question'">
-                  <h4> 1. Pick one sentence that best promotes the following aspect of "{{ movieTitle }}". The aspect is described by several keywords.</h4>
+                  <h4> Imagine that you are recommending "{{movieTitle}}" to a
+                    friend who is interested in "<a class='red'>{{clusters[clusterIdx]['cluster_label']}}</a>"
+                    (further explained by keywords below). Which of the following sentences would you say?
+                    In addition, please count the number of adjectives in each sentence and fill that in the text fields below.
+                  </h4>
                   <div class="warning-text">
-                    <p><strong>Aspect:</strong> {{clusters[clusterIdx]['cluster_label']}}</p>
                     <p><strong>Keywords:</strong> {{clusters[clusterIdx]['tag'].join(', ')}}</p>
                   </div>
                   <table class="mdl-data-table mdl-shadow--2dp question-table">
                     <thead>
                       <tr>
-                        <th class="mdl-data-table__cell--non-numeric">Best</th>
+                        <th class="mdl-data-table__cell--non-numeric best-cell ">Best</th>
+                        <th class="mdl-data-table__cell--non-numeric"># Adjectives</th>
                         <th class="mdl-data-table__cell--non-numeric quote-cell ">Quote</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="quote in clusters[clusterIdx]['quotes']">
-                        <td>
-                          <label  class="mdl-radio mdl-js-radio mdl-js-ripple-effect">
-                            <input type="radio" class="mdl-radio__button" v-bind:value="quote" v-model="selectedQuote">
+                      <tr v-for="review in clusters[clusterIdx]['review']">
+                        <td class="best-cell">
+                          <label  class="mdl-radio">
+                            <input type="radio" class="mdl-radio__button" v-bind:value="review" v-model="selectedReview">
                           </label>
                         </td>
-
-                        <td class="mdl-data-table__cell--non-numeric quote-cell ">{{ quote }}</td>
+                        <td>
+                          <form action="#">
+                            <div class="mdl-textfield mdl-js-textfield">
+                              <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" v-model="clusters[clusterIdx]['num_adj'][$index]">
+                              <span class="mdl-textfield__error">Input is not a number!</span>
+                            </div>
+                          </form>
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric quote-cell ">{{ review }}</td>
                       </tr>
+                      <tr>
+                        <td>
+                          <label  class="mdl-radio">
+                            <input type="radio" class="mdl-radio__button" v-bind:value="None" v-model="selectedReview">
+                          </label>
+                        </td>
+                        <td></td>
+                        <td class="mdl-data-table__cell--non-numeric quote-cell ">None of the above is good enough</td>
+                    </tr>
                     </tbody>
                   </table>
-                <br /><br /><br />
-                  <h4>2. Now, edit the following short review generated based on the sentence you selected. The review should be less than 50 words and have correct grammar. Keep the start of the review with the format of  'You like movies featuring [Noun]'  or 'You like [Adjective] movies'.</h4>
-                  <form action="#">
-                    <div class="mdl-textfield mdl-js-textfield review-input">
-                      <textarea v-model="review" class="mdl-textfield__input" type="text" rows= "4" id="user-review"></textarea>
-                    </div>
-                  </form>
-                  Word count: {{review.split(' ').length - 1}}
 
                 <div class="nav-buttons">
                   {{clusterIdx + 1}} of {{clusters.length}}
@@ -383,60 +402,104 @@
 
     <script>
     var DEFAULT_INPUT = {
-      movieId: 1213,
-      movieTitle: "Goodfellas",
-      movieDescription: "Henry Hill is a small time gangster, who takes part in a robbery with Jimmy Conway and Tommy De Vito, two other gangsters who have set their sights a bit higher. His two partners kill off everyone else involved in the robbery, and slowly start to climb up through the hierarchy of the Mob. Henry, however, is badly affected by his partners success, but will he stoop low enough to bring about the downfall of Jimmy and Tommy?",
-      posterSrc: "http://image.tmdb.org/t/p/original/ckDwlkT8V71rQxqmxFgzS91rjlR.jpg",
-      clusters: [
-    {
-      "cluster_label": "dramatic",
-      "quotes": [],
-      "tag": [
-        "drama",
-        "dramatic",
-        "intense",
-        "storytelling",
-        "thought-provoking"
+      "movieId": 300,
+      "movieDescription": "Quiz Show is a 1994 American historical drama film which tells the true story of the Twenty One quiz show scandal of the 1950s.",
+      "posterSrc": "http://image.tmdb.org/t/p/original/b3tVP6Dy730EySNKneVrXlSdd66.jpg",
+      "clusters": [
+        {
+          "movieId": 300,
+          "review": [
+            "You like movies featuring 1950s, Based on a non-fiction book by one Richard Goodwin, a former US Congress investigator who played a key role in unraveling the American TV quiz show scandals of the late 1950s. Its quite compelling to watch.",
+            "You like movies featuring 1950s characters and events from that timeperiod. The movie surrounds the quiz show scandals of the 1950s and offers a colorful look at the events that transpired. It is based off of a non-fiction book by Richard Goodwin who played a role in exposing many scandals.",
+            "You like movies featuring 1950s. The movie surrounds the quiz show scandals of the 1950s."
+          ],
+          "num_adj": [],
+          "quotes": [
+            "The movie surrounds the quiz show scandals of the 1950s.",
+            "Based on a non-fiction book by one Richard Goodwin, a former US Congress investigator who played a key role in unraveling the American TV quiz show scandals of the late 1950s.",
+            "I analyzed from this movie is how the studio producers of the quiz show, Dan Enright and Albert Freedman, take advantage of the people to make more money and get their quiz show a top rating in television and fool people.The thought, which came to me when I was watching the movie, is quiz shows were not popular at that time."
+          ],
+          "tag": [
+            "1950s",
+            "original",
+            "television"
+          ],
+          "cluster_label": "1950s"
+        },
+        {
+          "movieId": 300,
+          "num_adj": [],
+          "quotes": [
+            "In this way, they are cheating people, breaking their trust and spoiling the meaning of QUIZ SHOW.",
+            "The TV show discovered a big business, and they didn't care about honesty, truth, or rules.",
+            "The TV show discovered a big business, and they got blind.",
+            "Their crimes are proved and they go to a committee of Congress.",
+            "Quiz Show shows how people are blinded by greed.",
+            "The first time Charles Van Doren has a mental conflict, but he is blinded by greed later."
+          ],
+          "tag": [
+            "business",
+            "cheating",
+            "corruption",
+            "crime",
+            "greed",
+            "investigation",
+            "manipulation",
+            "morality",
+            "obsession"
+          ],
+          "cluster_label": "cheating"
+        },
+        {
+          "movieId": 300,
+          "review": [],
+          "num_adj": [],
+          "quotes": [
+            "Robert Redford's \"Quiz Show\" is a great drama about what happened behind the scenes of a very popular quiz show.",
+            "Paul Attanasio delivered one the best screenplays of all time, here you can find humor, drama, curiosity and really learn many things.",
+            "The story is told as part drama, part history lesson and part comedy."
+          ],
+          "tag": [
+            "drama",
+            "dramatic",
+            "talky"
+          ],
+          "cluster_label": "drama"
+        },
+        {
+          "cluster_label": "intellectual",
+          "quotes": [],
+          "tag": [
+            "intellectual",
+            "intelligent"
+          ],
+          "movieId": 300
+        },
+        {
+          "movieId": 300,
+          "review": [
+            "You like movies featuring interesting, To begin with, the cast and performances are just excellent. The tension built by Charles Van Doren and how the tv network handles it all holds the attention of the viewer to see what the outcome is.",
+            "You like movies featuring interesting people. The cast is composed of the excellent Paul Scofield as Mark Van Dorn, Charles' father.",
+            "You like movies featuring good writing. The script is so interesting that even though one knows the outcome, its a lot of fun watching it happen."
+          ],
+          "num_adj": [],
+          "quotes": [
+            "The \"21\" producers and the sponsor proved that with an interesting and charming contestant on the show they get more ratings and they get more money.",
+            "The script is so interesting that even though one knows the outcome, its a lot of fun watching it happen.",
+            "To begin with, the cast and performances are just excellent.",
+            "Rounding out the cast is the excellent Paul Scofield as Mark Van Dorn, Charles' father.",
+            "Excellent",
+            "Fraud People In The Great Film: Quiz Show"
+          ],
+          "tag": [
+            "excellent",
+            "great",
+            "interesting"
+          ],
+          "cluster_label": "interesting"
+        }
       ],
-      "movieId": 1358
-    },
-    {
-      "cluster_label": "good",
-      "quotes": [
-        "The two friends values of simple pleasures and simple right and wrong puts them at odds in the small town, good-ole-boy, Baptist South.The film's spot on portrayal of tribulations of the rural poor and the hope and hypocrisy, the goodness and wickedness that exist everywhere, every day make it a film that will remain timeless.",
-        "Thorton has proved his abilities acting and directing, but of his entire career so far, this is his best work at both.",
-        "Billy Bob Thornton at his best.",
-        "After watching this film, it is hard to put into words just how good it is."
-      ],
-      "tag": [
-        "good",
-        "great",
-        "interesting",
-        "original"
-      ],
-      "movieId": 1358
-    },
-    {
-      "cluster_label": "mentor",
-      "quotes": [],
-      "tag": [
-        "childhood",
-        "mentor",
-        "runaway"
-      ],
-      "movieId": 1358
-    },
-    {
-      "cluster_label": "redemption",
-      "quotes": [],
-      "tag": [
-        "compassionate",
-        "disability",
-        "redemption"
-      ],
-      "movieId": 1358
-    }
-  ],
+      "movieTitle": "Quiz Show"
     };
     var input = simpleamt.getInput(DEFAULT_INPUT);
     var vm = new Vue({
@@ -449,9 +512,7 @@
         clusters: input.clusters,
         clusterIdx: 0,
         pageType: 'question',
-        selectedQuote: '',
-        review: '',
-        generatedReview: '',
+        selectedReview: '',
         comment: ''
       },
       created: function() {
@@ -470,36 +531,29 @@
       },
       methods: {
         clickOnNext: function() {
-          var reviewLen = this.review.split(" ").length;
-          if (this.clusters[this.clusterIdx]['quotes'].length > 0) {
-            if (reviewLen == 0) {
-              alert("Review can not be empty!");
-              return;
-            } else if (this.selectedQuote === '') {
-              alert("You must select a quote!");
-              return;
-            } else if (this.generatedReview === this.review ) {
-              alert("You must edit the review.");
-              return;
-            } else if (reviewLen > 50) {
-              alert("Please shorten the review to less than 50 words.");
+          var cluster = this.clusters[this.clusterIdx];
+          if (cluster.hasOwnProperty('review') &&
+              cluster['review'].length > 0) {
+            if (cluster['num_adj'].length < cluster['review'].length) {
+              alert("You must enter number of adjectives in each sentence!");
               return;
             }
-            if (this.review.indexOf('You like movie') < 0) {
-              alert("Your review must start with 'You like movies ___'. Carefully read the instruction!");
+            for (var i = 0; i < cluster['num_adj'].length; i++) {
+                if (typeof(cluster['num_adj'][i]) == 'undefined') {
+                  alert("You must enter number of adjectives in each sentence!");
+                  return;
+                };
+            };
+
+            if (this.selectedReview === '') {
+              alert("You must select a review!");
               return;
             }
           }
-          this.clusters[this.clusterIdx]['review'] = this.review;
+          cluster['best_review'] = this.selectedReview;
           if (this.clusterIdx < this.clusters.length - 1) {
               this.clusterIdx += 1;
-              console.log(this.clusters[this.clusterIdx]['quotes'].length);
-              if (this.clusters[this.clusterIdx]['quotes'].length === 0) {
-                // Skip aspect with no quotes.
-                this.clusterIdx += 1;
-              }
-              this.selectedQuote = '';
-              this.review = '';
+              this.selectedReview = '';
           } else {
             this.pageType = "finish";
           }

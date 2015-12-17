@@ -5,7 +5,7 @@ GENOME_FILE="/Users/user/Documents/workspace/semantic/data/movie_genome.csv"
 MOVIE_DETAIL_FILE="/Users/user/Documents/workspace/semantic/data/movie_details.csv"
 NUM="10"
 MOVIE_ID_OUT="./sample_movies.txt"
-OUT="./turk_input_movies.txt"
+OUT="./pilot_3_input.txt"
 
 python generate_movie_tag_clusters.py --model_path $MODEL_PATH \
   --movie_genome_path $GENOME_FILE \

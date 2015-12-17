@@ -31,6 +31,7 @@ class ReviewSearchEngine(object):
             return
         self.indexer = index.open_dir(self.indexDir)
 
+
     def create_index(self, user, pwd):
         con = connect(host=HOST, db=DB, user=user, password=pwd)
         index_writer = self.indexer.writer()
@@ -52,7 +53,8 @@ class ReviewSearchEngine(object):
     def search(self, mid, word):
         """Search reivew sentences with "word" on movie "mid".
         """
-        with self.indexer.searcher() as searcher:
+        hits = []
+        with self.indexer.searcher(closereader=False) as searcher:
             qp = QueryParser("sentence", schema=self.indexer.schema,
                              termclass=query.Variations)
             q = qp.parse(unicode(word))
@@ -60,14 +62,14 @@ class ReviewSearchEngine(object):
             votes_sort = sorting.FieldFacet("votes", reverse=True)
             up_votes_sort = sorting.FieldFacet("up_votes", reverse=True)
             rating_sort = sorting.FieldFacet("rating", reverse=True)
-            for res in searcher.search(q, filter=allow_q,
-                                   sortedby=[up_votes_sort, rating_sort]):
-                yield res
+            return searcher.search(
+                q, filter=allow_q, sortedby=[up_votes_sort, rating_sort])
+
 
 if __name__ == "__main__":
     search_engine = ReviewSearchEngine('review_indexes')
-    pwd = raw_input('Password: ')
-    search_engine.create_index('schang', pwd)
+    # pwd = raw_input('Password: ')
+    # search_engine.create_index('schang', pwd)
     mid = raw_input("movie:")
     word = raw_input("word:")
     while mid and word:

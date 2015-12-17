@@ -390,7 +390,7 @@
         clusters: input.clusters,
         questions: [
           "1. The following table contains a group of related, descriptive tags about the movie above. Mark any tags that do not fit with the others. E.g., 'kids' does not fit with 'violence' and 'brutality'. If there are only two tags, and they describe very different aspects of the movie, please do not mark either one.",
-          "2. Mark any tags that are potentially offensive or inappropriate for use in a family-oriented web site. E.g., 'suicide' and 'nudity' are inappropriate.",
+          "2. Which of the following tags are inappropriate to fill in the blank in the sentence - 'You like movies featuring ____'?",
           // Imagine that you want to persuade your friend to watch this movie. Which of the following tags are not appropriate to fill in the sentence 'you like movies featuring [Noun]' or 'you like [adjective] movies'?
           "3. Pick the tag that best represents the group of tags. If there are two tags, pick the one that better describes the movie."
         ],
@@ -466,6 +466,9 @@
         console.log(vm.$data.clusters);
         simpleamt.setOutput({
           "movieId": vm.$data.movieId,
+          "movieTitle": vm.$data.movieTitle,
+          "movieDescription": vm.$data.movieDescription,
+          "posterSrc": vm.$data.posterSrc,
           "clusters": vm.$data.clusters,
           "comment": vm.$data.comment
         });
