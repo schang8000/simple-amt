@@ -5,3 +5,4 @@ config.json
 hit_templates_rendered/*
 rendered_templates/*
 config*.json
+*/*.txt
