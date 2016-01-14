@@ -16,7 +16,7 @@ else
   OUTPUT="${1}/pilot_${2}_result_sandbox.txt"
 fi
 
-echo "*****  Launching HITs with the following parameters:"
+echo "*****  Get results for the following HITs:"
 echo $ID_FILE
 echo $OUTPUT
 

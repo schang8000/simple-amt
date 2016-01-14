@@ -24,7 +24,7 @@ if __name__ == '__main__':
   template = env.get_template(args.html_template)
 
   hit_ids = []
-  for i, line in enumerate(args.input_json_file):
+  for i, line in enumerate(args.input_json_file):    
     hit_input = json.loads(line.strip())
 
     # In a previous version I removed all single quotes from the json dump.

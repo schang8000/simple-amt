@@ -84,7 +84,8 @@ if __name__ == "__main__":
     movie_detail_genome = movie_detail[
         movie_detail.movieId.isin(set(movie_genome.movie_id))
         ].sort_values(by=['rating_density'], ascending=False)
-    movie_detail_genome = movie_detail_genome[movie_detail_genome.avgRating>=3.5]
+    # Only sample from high quality movies.
+    movie_detail_genome = movie_detail_genome[movie_detail_genome.avgRating>=3.8]
     movie_ids = []
     if args.movie_id_file:
         with open(args.movie_id_file) as f:
@@ -99,7 +100,7 @@ if __name__ == "__main__":
                 f.write(str(mid) + '\n')
     # Get tmdb data from database.
     try:
-        con = pymysql.connect(host="movielens.cs.umn.edu", db="ML3", user="readonly")
+        con = pymysql.connect(host="localhost", db="ML3", user="readonly")
         tmdb_data = pd.read_sql("select * from movie_tmdb_data where movieId in (%s)" % str(movie_ids).strip('[]'), con)
     except:
         sys.exit("Error connecting to tmdb db!")

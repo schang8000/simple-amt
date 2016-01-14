@@ -5,7 +5,7 @@
   "reward": 0.15,
   "duration": 900,
   "frame_height": 1000,
-  "max_assignments": 5,
+  "max_assignments": 3,
   "country": "US",
   "hits_approved": 2000,
   "percent_approved": 98

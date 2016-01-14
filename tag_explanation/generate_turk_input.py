@@ -27,7 +27,7 @@ class FromTagspToExplanation(object):
                 row['worker_id'] = data['worker_id']
                 row['hit_id'] = data['hit_id']
                 row['tag'] = tag['name']
-                row['not_fit'] = 0 if not tag.get('Does not fit') else 1
+                row['not_fit'] = 0 if not tag.get('Does not fit with others') else 1
                 row['inappropriate'] = 0 if not tag.get('Inappropriate') else 1
                 row['best'] = 1 if cluster.get('Best tag') == tag['name'] else 0
                 result.append(row)

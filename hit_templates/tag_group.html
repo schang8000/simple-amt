@@ -14,7 +14,7 @@
     <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
     <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
     <script src="https://cdn.jsdelivr.net/vue/1.0.10/vue.min.js"></script>
-
+    <script src="//uniqueturker.myleott.com/lib.js" type="text/javascript"></script>
     <style>
     html, body {
       font-family: 'Roboto', 'Helvetica', sans-serif;
@@ -239,6 +239,9 @@
     .turk .question-section {
       min-height: 700px;
     }
+    .turk .red {
+      color: red;
+    }
     </style>
   </head>
   <body class="turk mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
@@ -249,8 +252,10 @@
           <h3>Find topics of a movie</h3>
         </div>
       </header>
+      {% raw %}
+
       <main class="mdl-layout__content">
-        {% raw %}
+
         <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
           <div class="mdl-card mdl-cell mdl-cell--12-col">
             <div class="mdl-card__supporting-text">
@@ -380,6 +385,8 @@
       clusters: [{"tags": [{"name": "adolescence"}, {"name": "depression"}, {"name": "loneliness"}, {"name": "friendship"}, {"name": "suicide"}]}, {"tags": [{"name": "teenager"}, {"name": "teenagers"}, {"name": "mentor"}, {"name": "teens"}]}, {"tags": [{"name": "original"}]}],
     };
     var input = simpleamt.getInput(DEFAULT_INPUT);
+    // Each worker is limited to 20 HITs.
+    var UT_ID = "5ed07df731377d0398facf0a6e7c1019";
     var vm = new Vue({
       el: '#app',
       data: {
@@ -389,13 +396,13 @@
         posterSrc: input.posterSrc,
         clusters: input.clusters,
         questions: [
-          "1. The following table contains a group of related, descriptive tags about the movie above. Mark any tags that do not fit with the others. E.g., 'kids' does not fit with 'violence' and 'brutality'. If there are only two tags, and they describe very different aspects of the movie, please do not mark either one.",
-          "2. Which of the following tags are inappropriate to fill in the blank in the sentence - 'You like movies featuring ____'?",
+          "1. The following table contains a group of related, descriptive tags about the movie above. Mark any tags that do not fit with the other tags. E.g., 'kids' does not fit with 'violence' and 'brutality'. If there are only two tags, and they describe very different aspects of the movie, please do not mark either one.",
+          "2. Which of the following tags are inappropriate to fill in the blank in the sentence - 'You like movies featuring ____', which will be presented to users of a movie recommendation service?",
           // Imagine that you want to persuade your friend to watch this movie. Which of the following tags are not appropriate to fill in the sentence 'you like movies featuring [Noun]' or 'you like [adjective] movies'?
           "3. Pick the tag that best represents the group of tags. If there are two tags, pick the one that better describes the movie."
         ],
         tableHeader: [
-          "Does not fit",
+          "Does not fit with others",
           "Inappropriate",
           "Best tag"
         ],
@@ -412,6 +419,11 @@
         // Shallow copy tags shown and assign modified object back when clicking
         // on "next".
         // this.tagsShown = $.extend({}, this.clusters[0].tags);
+      },
+      ready: function() {
+        if (UTWorkerLimitReached(UT_ID)) {
+          $('body')[0].innerHTML = "You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.";
+        }
       },
       computed: {
         tagsShown: function() {
