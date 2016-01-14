@@ -6,3 +6,7 @@ hit_templates_rendered/*
 rendered_templates/*
 config*.json
 */*.txt
+tag_explanation/review_indexes/_MAIN_1.toc
+tag_explanation/review_indexes/MAIN_l1zjxahy1odayx1n.seg
+tag_explanation/review_indexes/MAIN_WRITELOCK
+tag_group/.ipynb_checkpoints/Process_result-checkpoint.ipynb
