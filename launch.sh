@@ -10,12 +10,12 @@ TEMPLATE="${1}.html"
 
 if [[ $3 = "--prod" ]]; then
   PROPERTY="hit_properties/${1}.json"
-  INPUT="${1}/pilot_${2}_input.txt"
-  HIT_ID="${1}/hit_ids_pilot_${2}.txt"
+  INPUT="${1}/expt_${2}_input.txt"
+  HIT_ID="${1}/hit_ids_expt_${2}.txt"
 else
   PROPERTY="hit_properties/${1}_sandbox.json"
-  INPUT="${1}/pilot_${2}_input.txt"
-  HIT_ID="${1}/hit_ids_pilot_${2}_sandbox.txt"
+  INPUT="${1}/expt_${2}_input.txt"
+  HIT_ID="${1}/hit_ids_expt_${2}_sandbox.txt"
 fi
 
 echo "#####Launching HITs with the following parameters:"

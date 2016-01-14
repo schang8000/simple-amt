@@ -69,7 +69,7 @@ class FromTagspToExplanation(object):
                 clusters = movie[1][0]
                 for cluster in clusters:
                     quotes = searcher.search(mid, cluster['cluster_label'])
-                    quotes = quotes[:NUM_QUOTES]
+                    quotes = list(set(quotes))[:NUM_QUOTES]
                     if len(quotes) < NUM_QUOTES:
                         stop = False
                         for tag in cluster['tag']:
@@ -81,7 +81,7 @@ class FromTagspToExplanation(object):
                                     break
                             if stop:
                                 break
-                    cluster['quotes'] = [quote['sentence'] for quote in quotes]
+                    cluster['quotes'] = [quote['sentence'].replace('\n', ' ') for quote in quotes]
 
                 movie_obj = {
                     'movieId': mid, 'clusters': clusters,
