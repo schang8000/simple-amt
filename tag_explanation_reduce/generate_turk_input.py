@@ -8,6 +8,7 @@ class PrepareTagExplanationReduceInput(object):
 
     def process(self):
         results = {}
+        print self.infile
         with open(self.infile, 'r') as f:
             for line in f.readlines():
                 res = json.loads(line)

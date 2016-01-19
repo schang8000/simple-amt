@@ -8,5 +8,6 @@
   "max_assignments": 3,
   "country": "US",
   "hits_approved": 2000,
-  "percent_approved": 98
+  "percent_approved": 98,
+  "duration": 3600
 }

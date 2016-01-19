@@ -24,4 +24,15 @@
 - Launch HITs
 
       cd ${PROJECT_ROOT}
-      python launch_hits.py   --html_template=tag_group.html   --hit_properties_file=hit_properties/tag_group.json   --input_json_file=tag_group/${INPUT}  --hit_ids_file=tag_group/${ID_FILE}
+      sh launch.sh tag_explanation ${EXPT_ID} --prod
+
+# 3. Tag explanation reduction experiment
+- Generate input file to HIT template
+
+      cd tag_explanation
+      sh gen_input.sh ${EXPT_ID}
+
+- Launch HITs
+
+      cd ${PROJECT_ROOT}
+      sh launch.sh tag_explanation_reduce ${EXPT_ID} 

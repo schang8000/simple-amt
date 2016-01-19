@@ -66,22 +66,28 @@ class FromTagspToExplanation(object):
         with open(self.outfile, 'w') as f:
             for movie in output_df.iterrows():
                 mid = movie[1]['movieId']
+                print "Process movie {}".format(mid)
                 clusters = movie[1][0]
                 for cluster in clusters:
-                    quotes = searcher.search(mid, cluster['cluster_label'])
-                    quotes = list(set(quotes))[:NUM_QUOTES]
-                    if len(quotes) < NUM_QUOTES:
+                    # XXX: We need to remove duplicate reviews after deleting '\n' from reviews.
+                    quotes = set([quote['sentence'].replace('\n', ' ')
+                        for quote in searcher.search(mid, cluster['cluster_label'])])
+                    if len(quotes) > NUM_QUOTES:
+                        while len(quotes) > NUM_QUOTES:
+                            quotes.pop()
+                    else:
                         stop = False
                         for tag in cluster['tag']:
                             for quote in searcher.search(mid, tag):
+                                quote = quote['sentence'].replace('\n', ' ')
                                 if quote not in quotes:
-                                    quotes.append(quote)
+                                    quotes.add(quote)
                                 if len(quotes) >= NUM_QUOTES:
                                     stop = True
                                     break
                             if stop:
                                 break
-                    cluster['quotes'] = [quote['sentence'].replace('\n', ' ') for quote in quotes]
+                    cluster['quotes'] = list(quotes)
 
                 movie_obj = {
                     'movieId': mid, 'clusters': clusters,
