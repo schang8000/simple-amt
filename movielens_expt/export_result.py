@@ -4,6 +4,7 @@ import json
 import argparse
 import pymysql
 
+
 DB_HOST = 'localhost'
 DB_USER = 'web'
 DB = 'ML3_mirror'
@@ -48,6 +49,9 @@ class ExportResult(object):
         output = result_df.groupby(
                 ['movieId', 'clusterLabel', 'clusterTags']
             ).apply(self._pick_best_explanation).reset_index(drop=True).drop(['count', 'cluster'], 1)
+        output['explanation'] = output['explanation'].apply(
+            lambda x: x.replace("You like movies featuring ", "From your MovieLens profile it seems that you prefer movies tagged as "))
+        output = output[~output['explanation'].isnull()]
         con = pymysql.connect(host=DB_HOST, db=DB, user=DB_USER, password=self.password)
         output.to_sql('expt_crowd_expl_explanations', con, flavor='mysql', if_exists='append', index=False)
 

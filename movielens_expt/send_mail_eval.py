@@ -28,12 +28,12 @@ def send_mail(n):
     """
     if not os.path.exists('all_users_ids.txt'):
         con = pymysql.connect(DB_HOST, user=DB_USER, port=DB_PORT, db=DB_NAME, password=DB_PASS)
-        with con.Cursor() as cur:
+        with con.cursor() as cur:
             cur.execute('select distinct(userId) from user_login where tstamp > "2014-11-01"')
             recent_users = set([row[0] for row in cur.fetchall()])
             cur.execute('select userId from (select userId, count(*) as cc from user_rating_pairs group by userId) as A where A.cc > 14')
             users_with_enough_ratings = set([row[0] for row in cur.fetchall()])
-            candidates = recent_users - users_with_enough_ratings
+            candidates = list(recent_users - users_with_enough_ratings)
             shuffle(candidates)
             with open('all_users_ids.txt', 'w') as f:
                 for u in candidates:
@@ -71,7 +71,7 @@ def send_mail(n):
     We'd like your help to take a survey.
     The survey takes about <strong>10 minutes</strong>.
     </p>
-    <a href="http://movielens.org/go/ce">http://movielens.org/go/expl/a>
+    <a href="http://movielens.org/go/expl">http://movielens.org/go/expl</a>
     <p>
     Thanks for your help making MovieLens great!
     </p>
@@ -82,7 +82,7 @@ def send_mail(n):
     </div>
     """
     notes = "CrowdLens Eval Email"
-    exptId = "Crowd Explanation"
+    exptId = "explanation"
     with open('batch_{}_log.txt'.format(n), 'a') as f:
         for userId in users_to_mail:
             tmp = "sending to userId %s" % userId
@@ -101,7 +101,7 @@ def send_mail(n):
                 'ignoreMinCutoffDate': True,
                 'token': API_TOKEN
             }
-            r = requests.post(API_URL, data=json.dumps(data), headers=API_POST_HEADERS, verify=False)
+            r = requests.post(API_URL, data=json.dumps(data), headers=API_POST_HEADERS, verify=True)
             print(r.text)
             f.write(r.text + '\n')
             time.sleep(1)
