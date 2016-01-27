@@ -1,8 +1,8 @@
 {
   "title": "Select the best reason to recommend a movie",
-  "description": "Select the best reason to recommend a movie. Takes 1~2 minutes.",
+  "description": "Select the best reason to recommend a movie and count number of adjectives in text. Takes 1~2 minutes.",
   "keywords": "movie, recommend, text, selection",
-  "reward": 0.15,
+  "reward": 0.4,
   "duration": 900,
   "frame_height": 1000,
   "max_assignments": 3,

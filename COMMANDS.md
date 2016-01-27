@@ -29,10 +29,15 @@
 # 3. Tag explanation reduction experiment
 - Generate input file to HIT template
 
-      cd tag_explanation
+      cd tag_explanation_reduce
       sh gen_input.sh ${EXPT_ID}
 
 - Launch HITs
 
       cd ${PROJECT_ROOT}
-      sh launch.sh tag_explanation_reduce ${EXPT_ID} 
+      sh launch.sh tag_explanation_reduce ${EXPT_ID}
+
+# Prepare data for experiment
+- Export crowd result to
+
+- Export blacklisted tags

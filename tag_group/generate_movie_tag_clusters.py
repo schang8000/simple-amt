@@ -107,7 +107,7 @@ if __name__ == "__main__":
     clusterer = Word2VecClusterer(args.model_path)
     ap = AffinityPropagation(damping=0.5, affinity="precomputed")
     movie_genome_imdb = clusterer.filter_genome(movie_genome)
-    top_20_tags_imdb = movie_genome_imdb.groupby('movie_id').apply(lambda x: top_n(x, 'relevance', 20)).reset_index(drop=1)
+    top_20_tags_imdb = movie_genome_imdb.groupby('movie_id').apply(lambda x: top_n(x, 'relevance', NUM_TAGS)).reset_index(drop=1)
     print "Writing movies..."
     with open(args.output or "turk_movies.json", 'w') as f:
         for mid in movie_ids:
